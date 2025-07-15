@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Stefany</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos personalizados para complementar Tailwind */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            overflow: hidden; /* Evita el scroll para mantener el efecto de fondo */
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 8px rgba(236, 72, 153, 0.6), 0 0 20px rgba(236, 72, 153, 0.4);
+        }
+
+        @property --angle {
+          syntax: '<angle>';
+          initial-value: 0deg;
+          inherits: false;
+        }
+
+        .glowing-card {
+            --border-size: 3px;
+            --angle: 0deg;
+            
+            border: var(--border-size) solid transparent;
+            border-radius: 1.5rem;
+            
+            background-image: 
+                linear-gradient(to right, #1a1a2e, #1a1a2e),
+                conic-gradient(from var(--angle), #d946ef, #ec4899, #8b5cf6, #d946ef);
+            
+            background-size: 100% 100%;
+            background-position: center center;
+            background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box;
+            
+            animation: rotate-angle 4s linear infinite;
+            transition: padding 0.7s cubic-bezier(0.45, 0, 0.55, 1);
+            position: relative; /* Necesario para posicionar el botón de regreso */
+        }
+        
+        .glowing-card.is-shrunken {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        
+        #intro-paragraph {
+            transition: max-height 0.7s cubic-bezier(0.45, 0, 0.55, 1), margin 0.7s cubic-bezier(0.45, 0, 0.55, 1), opacity 0.5s ease-out;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .action-button {
+            transition: width 0.5s ease, padding 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        #button-container {
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+        }
+
+        #back-button {
+            transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+        }
+
+        .message, #secret-code-section {
+            transition: opacity 0.4s ease, height 0.5s ease, max-height 0.5s ease;
+            height: 0;
+            overflow: hidden;
+        }
+        .message.is-visible, #secret-code-section.is-visible {
+            height: auto;
+            max-height: 10rem;
+            opacity: 1;
+        }
+        
+        @keyframes rotate-angle {
+          to { --angle: 360deg; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        
+        #cursor-glow {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(236, 72, 153, 0.3);
+            filter: blur(20px);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+            z-index: 9999;
+        }
+
+        .gradient-ball {
+            background: conic-gradient(from var(--angle), #d946ef, #ec4899, #8b5cf6, #d946ef);
+            animation: rotate-angle 4s linear infinite;
+        }
+
+        /* CAMBIO: Estilos para el contenedor del input secreto */
+        #secret-input-wrapper {
+            position: relative;
+            border-radius: 0.75rem;
+            padding: 2px; /* Grosor del borde */
+            background: rgba(255, 255, 255, 0.2); /* Borde "apagado" */
+            transition: background 0.4s;
+        }
+        #secret-input-wrapper.is-focused {
+            background: conic-gradient(from var(--angle), #d946ef, #ec4899, #8b5cf6, #d946ef);
+            animation: rotate-angle 4s linear infinite;
+        }
+        #secret-input-wrapper.success {
+            background: #22c55e;
+            animation: none; /* Detener animación en éxito */
+        }
+        #secret-input-wrapper.error {
+            background: #ef4444; /* Borde rojo en error */
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        #secret-code-input {
+            background-color: #1a1a2e; /* Color de fondo interior */
+            border: none;
+            outline: none;
+            width: 100%;
+            border-radius: 0.6rem; /* Radio interior */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <canvas id="particle-canvas"></canvas>
+    <div id="cursor-glow"></div>
+
+    <main class="text-center w-full max-w-4xl mx-auto">
+        
+        <div id="glowing-card" class="glowing-card p-8 sm:p-12 md:p-16">
+            
+            <a href="#" id="back-button" class="gradient-ball absolute top-6 left-6 w-10 h-10 rounded-full flex items-center justify-center opacity-0 pointer-events-none transform hover:scale-110 -translate-x-20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256" class="relative z-10"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"></path></svg>
+            </a>
+
+            <div class="animate-float">
+                <h1 class="text-5xl md:text-7xl font-bold text-white text-glow mb-4">
+                    Stefany
+                </h1>
+            </div>
+
+            <p id="intro-paragraph" class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mt-6 mb-10">
+                Un espacio creado solo para ti. Lleno de luz, sueños y posibilidades infinitas.
+            </p>
+
+            <div id="button-container" class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#" id="gallery-button" class="action-button w-full sm:w-auto bg-pink-500/80 hover:bg-pink-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 transform hover:scale-105">
+                    Tu Galería
+                </a>
+                <a href="https://docs.google.com/document/d/1zak06Uha2zn2hmyjO2rh1hzpEb7hLj_WRrxZr6_PfA8/edit?usp=sharing" target="_blank" rel="noopener noreferrer" id="writings-button" class="action-button w-full sm:w-auto bg-cyan-500/80 hover:bg-cyan-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transform hover:scale-105">
+                    Escritos
+                </a>
+                <a href="#" id="phrase-button" class="action-button w-full sm:w-auto bg-purple-500/80 hover:bg-purple-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:scale-105">
+                    &lt;3
+                </a>
+                <a href="#" id="lock-button" class="action-button w-full sm:w-auto bg-gray-600/80 hover:bg-gray-500 text-white font-semibold p-3 rounded-full shadow-lg shadow-gray-500/30 hover:shadow-gray-500/50 transform hover:scale-105">
+                    🔐
+                </a>
+                <a href="#" id="flowers-button" class="action-button hidden w-full sm:w-auto bg-pink-400/80 hover:bg-pink-400 text-white font-semibold p-3 rounded-full shadow-lg shadow-pink-400/30 hover:shadow-pink-400/50 transform hover:scale-105">
+                    💐
+                </a>
+            </div>
+            
+            <p id="special-phrase" class="message text-pink-300 text-xl mt-8 opacity-0"></p>
+            <p id="gallery-message" class="message text-cyan-300 text-lg mt-8 opacity-0 leading-relaxed"></p>
+            
+            <div id="secret-code-section" class="opacity-0 mt-4">
+                <div class="flex items-center justify-center gap-2">
+                    <div id="secret-input-wrapper" class="w-full max-w-xs mx-auto">
+                        <input type="text" id="secret-code-input" placeholder="Introduce el código secreto" class="text-center w-full p-2 rounded-lg text-white">
+                    </div>
+                    <a href="#" id="submit-code-button" class="gradient-ball w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,140.69l42.34-42.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Script para el efecto de brillo del cursor
+        const cursorGlow = document.getElementById('cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                cursorGlow.style.left = `${e.clientX}px`;
+                cursorGlow.style.top = `${e.clientY}px`;
+            });
+        });
+
+        // Script para el efecto de partículas y constelaciones
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particlesArray;
+        const mouse = { x: null, y: null };
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 1;
+                this.speedX = (Math.random() * 0.6) - 0.3;
+                this.speedY = (Math.random() * 0.6) - 0.3;
+                this.color = 'rgba(236, 72, 153, 0.5)';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 12000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                                 + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        opacityValue = 1 - (distance/20000);
+                        ctx.strokeStyle = `rgba(107, 213, 255, ${opacityValue})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            connect();
+            requestAnimationFrame(animate);
+        }
+        init();
+        animate();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        // Script de botones
+        const glowingCard = document.getElementById('glowing-card');
+        const phraseButton = document.getElementById('phrase-button');
+        const galleryButton = document.getElementById('gallery-button');
+        const lockButton = document.getElementById('lock-button');
+        const backButton = document.getElementById('back-button');
+        const phraseElement = document.getElementById('special-phrase');
+        const galleryMessage = document.getElementById('gallery-message');
+        const secretCodeSection = document.getElementById('secret-code-section');
+        const secretInputWrapper = document.getElementById('secret-input-wrapper');
+        const secretCodeInput = document.getElementById('secret-code-input');
+        const submitCodeButton = document.getElementById('submit-code-button');
+        const flowersButton = document.getElementById('flowers-button');
+        const buttonContainer = document.getElementById('button-container');
+        const introParagraph = document.getElementById('intro-paragraph');
+
+        const phrases = [
+            "Eres demasiado bonita, no dejes que nadie te haga creer lo contrario.",
+            "No importa lo que pase, siempre serás especial para alguien.",
+            "Tu luz ilumina los rincones más oscuros del mundo.",
+            "Eres un sueño del que nadie querría despertar.",
+            "Tu existencia es la poesía más bonita jamás escrita. Significa esperanza.",
+            "No importa cuántas veces te lo diga, siempre será poco: eres increíble.",
+            "Cada parte de ti es bella, desde tus sueños hasta tus imperfecciones.",
+            "Eres la razón por la que creo que esxiten buenas mujeres.",
+            "Sé que no soy estoy a la altura, pero lo que importa es que eres especial.",
+            "No es la primera ni la última vez que te lo digo, pero eres una persona maravillosa.",
+
+        ];
+        let currentPhraseIndex = -1;
+        let animationState = 'initial';
+        let flowersUnlocked = false;
+
+        function showMessage(element, text) {
+            document.querySelectorAll('.message').forEach(msg => msg.classList.remove('is-visible'));
+            setTimeout(() => {
+                if(text) element.innerHTML = text;
+                element.classList.add('is-visible');
+            }, 300);
+        }
+
+        function shrinkCard() {
+            if (animationState === 'initial') {
+                glowingCard.classList.add('is-shrunken');
+                introParagraph.style.maxHeight = '0';
+                introParagraph.style.marginTop = '0';
+                introParagraph.style.marginBottom = '0';
+                introParagraph.classList.add('opacity-0');
+                backButton.classList.remove('opacity-0', 'pointer-events-none', '-translate-x-20');
+            }
+        }
+
+        phraseButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (animationState === 'gallery' || animationState === 'secret') return;
+            
+            shrinkCard();
+            animationState = 'phrases';
+            
+            galleryButton.style.width = '0';
+            galleryButton.style.paddingLeft = '0';
+            galleryButton.style.paddingRight = '0';
+            galleryButton.style.marginRight = '0';
+            galleryButton.style.opacity = '0';
+            lockButton.style.width = '0';
+            lockButton.style.paddingLeft = '0';
+            lockButton.style.paddingRight = '0';
+            lockButton.style.opacity = '0';
+            document.getElementById('writings-button').style.width = '0';
+            document.getElementById('writings-button').style.opacity = '0';
+            buttonContainer.style.justifyContent = 'center';
+
+            galleryMessage.classList.remove('is-visible');
+
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * phrases.length);
+            } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
+            currentPhraseIndex = randomIndex;
+            
+            showMessage(phraseElement, phrases[currentPhraseIndex]);
+        });
+
+        function handleSectionClick(state, messageElement, messageText) {
+            if (animationState !== 'initial') return;
+            
+            shrinkCard();
+            animationState = state;
+            
+            buttonContainer.style.maxHeight = '0';
+            buttonContainer.style.opacity = '0';
+
+            if (messageElement) {
+                showMessage(messageElement, messageText);
+            }
+        }
+
+        galleryButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const text = "Uyyy, lo siento. No puedo poner fotos tuyas si no las tengo.😉<br>PD: Conforme pase el tiempo iré agregando nuevas cosas ;)";
+            handleSectionClick('gallery', galleryMessage, text);
+        });
+        
+        lockButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleSectionClick('secret');
+            secretCodeSection.classList.add('is-visible');
+        });
+
+        // CAMBIO: Lógica de focus/blur para el nuevo borde
+        secretCodeInput.addEventListener('focus', () => {
+            if (!secretInputWrapper.classList.contains('success')) {
+                secretInputWrapper.classList.add('is-focused');
+            }
+        });
+        secretCodeInput.addEventListener('blur', () => {
+            secretInputWrapper.classList.remove('is-focused');
+        });
+
+        submitCodeButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            secretInputWrapper.classList.remove('error', 'success', 'is-focused');
+            if (secretCodeInput.value.toLowerCase() === 'flores') {
+                secretInputWrapper.classList.add('success');
+                flowersUnlocked = true;
+                setTimeout(() => {
+                    backButton.click();
+                }, 500);
+            } else {
+                secretInputWrapper.classList.add('error');
+                setTimeout(() => {
+                    secretInputWrapper.classList.remove('error');
+                }, 820);
+            }
+        });
+
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (animationState === 'initial') return;
+
+            glowingCard.classList.remove('is-shrunken');
+            backButton.classList.add('opacity-0', 'pointer-events-none', '-translate-x-20');
+            document.querySelectorAll('.message').forEach(msg => msg.classList.remove('is-visible'));
+            secretCodeSection.classList.remove('is-visible');
+            secretCodeInput.value = '';
+            secretInputWrapper.classList.remove('error', 'success', 'is-focused');
+
+            introParagraph.style.maxHeight = '';
+            introParagraph.style.marginTop = '';
+            introParagraph.style.marginBottom = '';
+            introParagraph.classList.remove('opacity-0');
+
+            buttonContainer.style.maxHeight = '';
+            buttonContainer.style.opacity = '';
+            buttonContainer.style.justifyContent = '';
+
+            document.querySelectorAll('.action-button').forEach(btn => {
+                if (btn.id === 'flowers-button' && !flowersUnlocked) {
+                    // Mantener el botón de flores oculto si no está desbloqueado
+                } else {
+                    btn.style.width = '';
+                    btn.style.paddingLeft = '';
+                    btn.style.paddingRight = '';
+                    btn.style.marginRight = '';
+                    btn.style.opacity = '';
+                }
+            });
+            
+            if (flowersUnlocked) {
+                flowersButton.classList.remove('hidden');
+            }
+            
+            animationState = 'initial';
+        });
+    </script>
+
+</body>
+</html>
