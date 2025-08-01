@@ -215,7 +215,7 @@
             </div>
 
             <p id="intro-paragraph" class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mt-6 mb-10">
-                Un espacio creado solo para ti. Lleno de luz, sueños y posibilidades infinitas.
+                Un espacio creado solo para ti. Exclusivamente para ti. Espero que te guste ;)
             </p>
 
             <div id="button-container" class="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -462,30 +462,58 @@
 
         // Event Listeners para los botones principales
         phraseButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (animationState !== 'initial') return;
-            
-            shrinkCard();
-            animationState = 'phrases';
-            
-            ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
-                const btn = document.getElementById(id);
-                btn.style.width = '0';
-                btn.style.paddingLeft = '0';
-                btn.style.paddingRight = '0';
-                btn.style.margin = '0';
-                btn.style.opacity = '0';
-            });
-            buttonContainer.style.justifyContent = 'center';
+    e.preventDefault();
 
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * phrases.length);
-            } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
-            currentPhraseIndex = randomIndex;
-            
-            showMessage(phraseElement, phrases[currentPhraseIndex]);
+    // Si la sección <3 no está activa, haz la animación solo una vez
+    if (animationState !== 'phrases') {
+        shrinkCard();
+        animationState = 'phrases';
+        ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
+            const btn = document.getElementById(id);
+            btn.style.width = '0';
+            btn.style.paddingLeft = '0';
+            btn.style.paddingRight = '0';
+            btn.style.margin = '0';
+            btn.style.opacity = '0';
         });
+        buttonContainer.style.justifyContent = 'center';
+    }
+
+    // Siempre muestra una frase diferente
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * phrases.length);
+    } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
+    currentPhraseIndex = randomIndex;
+    showMessage(phraseElement, phrases[currentPhraseIndex]);
+    });
+    phraseButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    // Si la sección <3 no está activa, haz la animación solo una vez
+    if (animationState !== 'phrases') {
+        shrinkCard();
+        animationState = 'phrases';
+        ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
+            const btn = document.getElementById(id);
+            btn.style.width = '0';
+            btn.style.paddingLeft = '0';
+            btn.style.paddingRight = '0';
+            btn.style.margin = '0';
+            btn.style.opacity = '0';
+        });
+        buttonContainer.style.justifyContent = 'center';
+    }
+
+    // Siempre muestra una frase diferente
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * phrases.length);
+    } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
+    currentPhraseIndex = randomIndex;
+    showMessage(phraseElement, phrases[currentPhraseIndex]);
+});
+
         
         galleryButton.addEventListener('click', (e) => {
             e.preventDefault();
