@@ -92,19 +92,19 @@
             transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
         }
 
-        .message, #secret-code-section {
-            transition: opacity 0.4s ease, height 0.5s ease, max-height 0.5s ease;
-            height: 0;
+        .message, #secret-code-section, #writings-section {
+            transition: opacity 0.4s ease, max-height 0.5s ease;
+            max-height: 0;
             overflow: hidden;
+            opacity: 0;
         }
-        .message.is-visible, #secret-code-section.is-visible {
-            height: auto;
-            max-height: 10rem;
+        .message.is-visible, #secret-code-section.is-visible, #writings-section.is-visible {
+            max-height: 500px; /* Aumentado para dar espacio a los textos */
             opacity: 1;
         }
         
         @keyframes rotate-angle {
-          to { --angle: 360deg; }
+            to { --angle: 360deg; }
         }
 
         @keyframes float {
@@ -141,7 +141,6 @@
             animation: rotate-angle 4s linear infinite;
         }
 
-        /* CAMBIO: Estilos para el contenedor del input secreto */
         #secret-input-wrapper {
             position: relative;
             border-radius: 0.75rem;
@@ -168,6 +167,31 @@
             outline: none;
             width: 100%;
             border-radius: 0.6rem; /* Radio interior */
+        }
+
+        #writing-display {
+            transition: opacity 0.5s ease;
+            max-height: 300px; 
+            overflow-y: auto;
+            padding-right: 1rem; 
+        }
+
+        #writing-display::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #writing-display::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        #writing-display::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #d946ef, #ec4899, #8b5cf6);
+            border-radius: 10px;
+        }
+
+        #writing-display::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #e857ff, #ff5baf, #9c6eff);
         }
     </style>
 </head>
@@ -198,7 +222,7 @@
                 <a href="#" id="gallery-button" class="action-button w-full sm:w-auto bg-pink-500/80 hover:bg-pink-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 transform hover:scale-105">
                     Tu Galería
                 </a>
-                <a href="https://docs.google.com/document/d/1zak06Uha2zn2hmyjO2rh1hzpEb7hLj_WRrxZr6_PfA8/edit?usp=sharing" target="_blank" rel="noopener noreferrer" id="writings-button" class="action-button w-full sm:w-auto bg-cyan-500/80 hover:bg-cyan-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transform hover:scale-105">
+                <a href="#" id="writings-button" class="action-button w-full sm:w-auto bg-cyan-500/80 hover:bg-cyan-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transform hover:scale-105">
                     Escritos
                 </a>
                 <a href="#" id="phrase-button" class="action-button w-full sm:w-auto bg-purple-500/80 hover:bg-purple-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:scale-105">
@@ -207,18 +231,25 @@
                 <a href="#" id="lock-button" class="action-button w-full sm:w-auto bg-gray-600/80 hover:bg-gray-500 text-white font-semibold p-3 rounded-full shadow-lg shadow-gray-500/30 hover:shadow-gray-500/50 transform hover:scale-105">
                     🔐
                 </a>
-                <a href="#" id="flowers-button" class="action-button hidden w-full sm:w-auto bg-pink-400/80 hover:bg-pink-400 text-white font-semibold p-3 rounded-full shadow-lg shadow-pink-400/30 hover:shadow-pink-400/50 transform hover:scale-105">
-                    💐
-                </a>
             </div>
             
-            <p id="special-phrase" class="message text-pink-300 text-xl mt-8 opacity-0"></p>
-            <p id="gallery-message" class="message text-cyan-300 text-lg mt-8 opacity-0 leading-relaxed"></p>
+            <p id="special-phrase" class="message text-pink-300 text-xl mt-8"></p>
+            <p id="gallery-message" class="message text-cyan-300 text-lg mt-8 leading-relaxed"></p>
             
-            <div id="secret-code-section" class="opacity-0 mt-4">
+            <div id="writings-section" class="w-full text-left mt-8">
+                <div id="writings-buttons" class="flex flex-col items-center gap-4 w-full">
+                    <!-- Los botones de los escritos se generarán aquí con JS -->
+                </div>
+                <div id="writing-display" class="hidden opacity-0">
+                    <h3 id="writing-title" class="text-2xl font-bold text-pink-300 mb-4 text-center"></h3>
+                    <p id="writing-content" class="text-gray-300 leading-relaxed whitespace-pre-wrap"></p>
+                </div>
+            </div>
+
+            <div id="secret-code-section" class="mt-4">
                 <div class="flex items-center justify-center gap-2">
                     <div id="secret-input-wrapper" class="w-full max-w-xs mx-auto">
-                        <input type="text" id="secret-code-input" placeholder="Introduce el código secreto" class="text-center w-full p-2 rounded-lg text-white">
+                        <input type="text" id="secret-code-input" placeholder="Introduce un código" class="text-center w-full p-2 rounded-lg text-white">
                     </div>
                     <a href="#" id="submit-code-button" class="gradient-ball w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center transform hover:scale-110">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,140.69l42.34-42.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
@@ -322,10 +353,13 @@
             init();
         });
 
-        // Script de botones
+        // --- LÓGICA DE LA INTERFAZ ---
+
+        // Elementos del DOM
         const glowingCard = document.getElementById('glowing-card');
         const phraseButton = document.getElementById('phrase-button');
         const galleryButton = document.getElementById('gallery-button');
+        const writingsButton = document.getElementById('writings-button');
         const lockButton = document.getElementById('lock-button');
         const backButton = document.getElementById('back-button');
         const phraseElement = document.getElementById('special-phrase');
@@ -334,10 +368,15 @@
         const secretInputWrapper = document.getElementById('secret-input-wrapper');
         const secretCodeInput = document.getElementById('secret-code-input');
         const submitCodeButton = document.getElementById('submit-code-button');
-        const flowersButton = document.getElementById('flowers-button');
         const buttonContainer = document.getElementById('button-container');
         const introParagraph = document.getElementById('intro-paragraph');
+        const writingsSection = document.getElementById('writings-section');
+        const writingsButtons = document.getElementById('writings-buttons');
+        const writingDisplay = document.getElementById('writing-display');
+        const writingTitle = document.getElementById('writing-title');
+        const writingContent = document.getElementById('writing-content');
 
+        // Contenido
         const phrases = [
             "Eres demasiado bonita, no dejes que nadie te haga creer lo contrario.",
             "No importa lo que pase, siempre serás especial para alguien.",
@@ -346,17 +385,48 @@
             "Tu existencia es la poesía más bonita jamás escrita. Significa esperanza.",
             "No importa cuántas veces te lo diga, siempre será poco: eres increíble.",
             "Cada parte de ti es bella, desde tus sueños hasta tus imperfecciones.",
-            "Eres la razón por la que creo que esxiten buenas mujeres.",
-            "Sé que no soy estoy a la altura, pero lo que importa es que eres especial.",
+            "Eres la razón por la que creo que existen buenas mujeres.",
+            "Sé que no estoy a la altura, pero lo que importa es que eres especial.",
             "No es la primera ni la última vez que te lo digo, pero eres una persona maravillosa.",
-
         ];
-        let currentPhraseIndex = -1;
-        let animationState = 'initial';
-        let flowersUnlocked = false;
 
+        // --- INICIO CAMBIOS ---
+        const writingsData = {
+            'carta-1': {
+                title: "Para la chica de mis sueños",
+                content: `Hola, Stefany.\n\nNo sé muy bien cómo empezar esto, pero sentía la necesidad de escribirte. Hay algo en ti que me atrapó desde el primer momento, algo que va más allá de lo físico. Es tu forma de ser, tu risa, la manera en que tus ojos brillan cuando hablas de algo que te apasiona.\n\nMe haces sentir cosas que no había sentido en mucho tiempo. Contigo, el mundo parece un lugar más brillante y lleno de posibilidades. Eres esa persona que llega y pone todo tu mundo patas arriba, pero para bien.\n\nGracias por existir.\n\nCon cariño,\nTu admirador.`,
+                locked: true,
+                code: 'sueños'
+            },
+            'poema-1': {
+                title: "Constelación",
+                content: `En el mapa de mi cielo,\nde repente, una estrella nueva.\nNo estaba en los planes,\nni en las viejas profecías.\n\nLlegaste.\n\nY ahora todas las demás estrellas\ngiran torpemente a tu alrededor,\ntratando de aprender\ncómo se hace para brillar tanto.\n\nEste es un texto de prueba para ver cómo funciona el scroll. Si todo va bien, deberías poder deslizar hacia abajo para leer todo el contenido sin problemas. La barra de desplazamiento debería tener los colores del borde que tanto te gustan. Espero que te encante este pequeño detalle. Fue hecho con mucho cariño solo para ti.`,
+                locked: true,
+                code: 'estrella'
+            },
+            'carta-2': {
+                title: "Un simple recordatorio",
+                content: `A veces, en el ajetreo del día a día, se nos olvida lo importantes que somos. \n\nSolo quería recordarte que eres una persona increíble. Fuerte, inteligente y con un corazón enorme. No dejes que las dudas o los malos días te hagan olvidar tu valor.\n\nSigue brillando como solo tú sabes hacerlo.`,
+                locked: true,
+                code: 'valor'
+            },
+            'flores-secretas': {
+                title: "FLORES",
+                content: `¿Te gustan las flores?... Espero que sí. A mi me gustan, me parecen hermosas (como tú). \n\nPero no por su olor, no por su forma, sino por lo que representan, lo que significan. \n\nPara mí significan vida, no hablan, no piensan, no sienten, pero… viven. Hay humanos que hablan, “piensan”, sienten, y no viven. \n\n¿Para tí qué significan?... Para mí la vida en su máxima expresión: Se estima que existen más de 270,000 especies diferentes de flores en el mundo. Cada rosa, planta y flor es única individualmente, irrepetible, como todos nosotros. \n\nHay demasiadas, diferentes formas, olores, colores, propósitos… Todo me recuerda a la vida, la vida misma, con sus altibajos, momentos buenos, momentos malos. \n\nPero son momentos, y merecen ser atendidos. La flor más antigua que se conoce, tiene 125 millones de años. Te regalo esas flores porque me pareces especial (y siempre lo serás). Lo hago de corazón, porque es lo quise, porque me salió del corazón hacerlo sin esperar nada a cambio. Porque muchas personas no reciben flores hasta el día de su muerte, posadas en una lápida. \n\nEs triste que la gente solo te diga lo mucho que te quería, que les importabas, que te admiraban ya que es muy tarde. Yo no quiero cometer ese error. Así que perdón si llegué a causar incomodidad, pero creo que mereces eso y mucho más..`,
+                locked: true,
+                code: 'flores'
+            }
+        };
+        // --- FIN CAMBIOS ---
+
+        // Variables de estado
+        let currentPhraseIndex = -1;
+        let animationState = 'initial'; // 'initial', 'phrases', 'gallery', 'secret', 'writings'
+
+        // Funciones de la interfaz
         function showMessage(element, text) {
             document.querySelectorAll('.message').forEach(msg => msg.classList.remove('is-visible'));
+            writingsSection.classList.remove('is-visible');
             setTimeout(() => {
                 if(text) element.innerHTML = text;
                 element.classList.add('is-visible');
@@ -374,27 +444,39 @@
             }
         }
 
+        function handleSectionClick(state, element, text) {
+            if (animationState !== 'initial') return;
+            
+            shrinkCard();
+            animationState = state;
+            
+            buttonContainer.style.maxHeight = '0';
+            buttonContainer.style.opacity = '0';
+            buttonContainer.classList.add('pointer-events-none');
+
+            if (element) {
+                if(text) element.innerHTML = text;
+                element.classList.add('is-visible');
+            }
+        }
+
+        // Event Listeners para los botones principales
         phraseButton.addEventListener('click', (e) => {
             e.preventDefault();
-            if (animationState === 'gallery' || animationState === 'secret') return;
+            if (animationState !== 'initial') return;
             
             shrinkCard();
             animationState = 'phrases';
             
-            galleryButton.style.width = '0';
-            galleryButton.style.paddingLeft = '0';
-            galleryButton.style.paddingRight = '0';
-            galleryButton.style.marginRight = '0';
-            galleryButton.style.opacity = '0';
-            lockButton.style.width = '0';
-            lockButton.style.paddingLeft = '0';
-            lockButton.style.paddingRight = '0';
-            lockButton.style.opacity = '0';
-            document.getElementById('writings-button').style.width = '0';
-            document.getElementById('writings-button').style.opacity = '0';
+            ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.style.width = '0';
+                btn.style.paddingLeft = '0';
+                btn.style.paddingRight = '0';
+                btn.style.margin = '0';
+                btn.style.opacity = '0';
+            });
             buttonContainer.style.justifyContent = 'center';
-
-            galleryMessage.classList.remove('is-visible');
 
             let randomIndex;
             do {
@@ -404,21 +486,7 @@
             
             showMessage(phraseElement, phrases[currentPhraseIndex]);
         });
-
-        function handleSectionClick(state, messageElement, messageText) {
-            if (animationState !== 'initial') return;
-            
-            shrinkCard();
-            animationState = state;
-            
-            buttonContainer.style.maxHeight = '0';
-            buttonContainer.style.opacity = '0';
-
-            if (messageElement) {
-                showMessage(messageElement, messageText);
-            }
-        }
-
+        
         galleryButton.addEventListener('click', (e) => {
             e.preventDefault();
             const text = "Uyyy, lo siento. No puedo poner fotos tuyas si no las tengo.😉<br>PD: Conforme pase el tiempo iré agregando nuevas cosas ;)";
@@ -431,7 +499,53 @@
             secretCodeSection.classList.add('is-visible');
         });
 
-        // CAMBIO: Lógica de focus/blur para el nuevo borde
+        writingsButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleSectionClick('writings', writingsSection);
+
+            writingsButtons.innerHTML = '';
+            let unlockedCount = 0;
+            for (const key in writingsData) {
+                if (!writingsData[key].locked) { // Solo mostrar si no está bloqueado
+                    unlockedCount++;
+                    const button = document.createElement('a');
+                    button.href = '#';
+                    button.textContent = writingsData[key].title;
+                    button.dataset.key = key;
+                    button.className = 'w-full max-w-sm bg-purple-500/80 hover:bg-purple-500 text-white font-semibold py-3 px-6 rounded-full shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:scale-105 transition-all duration-300';
+                    writingsButtons.appendChild(button);
+                }
+            }
+
+            if (unlockedCount === 0) {
+                const p = document.createElement('p');
+                p.textContent = 'Aún no has desbloqueado ningún escrito. ¡Usa los códigos secretos!';
+                p.className = 'text-center text-gray-400';
+                writingsButtons.appendChild(p);
+            }
+
+            writingDisplay.classList.add('hidden');
+            writingDisplay.classList.remove('opacity-0');
+            writingsButtons.classList.remove('hidden');
+        });
+
+        writingsButtons.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (e.target.tagName === 'A') {
+                const key = e.target.dataset.key;
+                const writing = writingsData[key];
+
+                if (writing) {
+                    writingTitle.textContent = writing.title;
+                    writingContent.textContent = writing.content;
+
+                    writingsButtons.classList.add('hidden');
+                    writingDisplay.classList.remove('hidden');
+                    setTimeout(() => writingDisplay.classList.add('opacity-100'), 50);
+                }
+            }
+        });
+
         secretCodeInput.addEventListener('focus', () => {
             if (!secretInputWrapper.classList.contains('success')) {
                 secretInputWrapper.classList.add('is-focused');
@@ -441,12 +555,23 @@
             secretInputWrapper.classList.remove('is-focused');
         });
 
+        // --- INICIO CAMBIOS ---
         submitCodeButton.addEventListener('click', (e) => {
             e.preventDefault();
             secretInputWrapper.classList.remove('error', 'success', 'is-focused');
-            if (secretCodeInput.value.toLowerCase() === 'flores') {
+            const enteredCode = secretCodeInput.value.toLowerCase();
+            let codeFound = false;
+
+            for (const key in writingsData) {
+                if (writingsData[key].code === enteredCode) {
+                    writingsData[key].locked = false; // Desbloquear el escrito
+                    codeFound = true;
+                    break; // Salir del bucle una vez encontrado
+                }
+            }
+
+            if (codeFound) {
                 secretInputWrapper.classList.add('success');
-                flowersUnlocked = true;
                 setTimeout(() => {
                     backButton.click();
                 }, 500);
@@ -457,15 +582,26 @@
                 }, 820);
             }
         });
+        // --- FIN CAMBIOS ---
 
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
             if (animationState === 'initial') return;
 
+            if (animationState === 'writings' && !writingDisplay.classList.contains('hidden')) {
+                writingDisplay.classList.remove('opacity-100');
+                setTimeout(() => {
+                    writingDisplay.classList.add('hidden');
+                    writingsButtons.classList.remove('hidden');
+                }, 400);
+                return; 
+            }
+
             glowingCard.classList.remove('is-shrunken');
             backButton.classList.add('opacity-0', 'pointer-events-none', '-translate-x-20');
             document.querySelectorAll('.message').forEach(msg => msg.classList.remove('is-visible'));
             secretCodeSection.classList.remove('is-visible');
+            writingsSection.classList.remove('is-visible');
             secretCodeInput.value = '';
             secretInputWrapper.classList.remove('error', 'success', 'is-focused');
 
@@ -476,23 +612,16 @@
 
             buttonContainer.style.maxHeight = '';
             buttonContainer.style.opacity = '';
+            buttonContainer.classList.remove('pointer-events-none');
             buttonContainer.style.justifyContent = '';
 
             document.querySelectorAll('.action-button').forEach(btn => {
-                if (btn.id === 'flowers-button' && !flowersUnlocked) {
-                    // Mantener el botón de flores oculto si no está desbloqueado
-                } else {
-                    btn.style.width = '';
-                    btn.style.paddingLeft = '';
-                    btn.style.paddingRight = '';
-                    btn.style.marginRight = '';
-                    btn.style.opacity = '';
-                }
+                btn.style.width = '';
+                btn.style.paddingLeft = '';
+                btn.style.paddingRight = '';
+                btn.style.margin = '';
+                btn.style.opacity = '';
             });
-            
-            if (flowersUnlocked) {
-                flowersButton.classList.remove('hidden');
-            }
             
             animationState = 'initial';
         });
