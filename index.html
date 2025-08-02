@@ -226,7 +226,7 @@
                     Escritos
                 </a>
                 <a href="#" id="phrase-button" class="action-button w-full sm:w-auto bg-purple-500/80 hover:bg-purple-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:scale-105">
-                    &lt;3
+                    <3
                 </a>
                 <a href="#" id="lock-button" class="action-button w-full sm:w-auto bg-gray-600/80 hover:bg-gray-500 text-white font-semibold p-3 rounded-full shadow-lg shadow-gray-500/30 hover:shadow-gray-500/50 transform hover:scale-105">
                     🔐
@@ -353,6 +353,21 @@
             init();
         });
 
+        // --- LÓGICA DE SONIDO ---
+        // Carga los archivos de sonido. Deben estar en la misma carpeta que este archivo HTML.
+        const popSound = new Audio('pop.wav');
+        const notificationSound = new Audio('notification.wav');
+
+        /**
+         * Reproduce un elemento de audio desde el principio.
+         * @param {HTMLAudioElement} audioElement El elemento de audio a reproducir.
+         */
+        function playSound(audioElement) {
+            // Reinicia el sonido al inicio para que pueda reproducirse varias veces
+            audioElement.currentTime = 0; 
+            audioElement.play().catch(e => console.error("Error al reproducir el sonido:", e));
+        }
+
         // --- LÓGICA DE LA INTERFAZ ---
 
         // Elementos del DOM
@@ -390,23 +405,22 @@
             "No es la primera ni la última vez que te lo digo, pero eres una persona maravillosa.",
         ];
 
-        // --- INICIO CAMBIOS ---
         const writingsData = {
-            'carta-1': {
-                title: "Para la chica de mis sueños",
-                content: `Hola, Stefany.\n\nNo sé muy bien cómo empezar esto, pero sentía la necesidad de escribirte. Hay algo en ti que me atrapó desde el primer momento, algo que va más allá de lo físico. Es tu forma de ser, tu risa, la manera en que tus ojos brillan cuando hablas de algo que te apasiona.\n\nMe haces sentir cosas que no había sentido en mucho tiempo. Contigo, el mundo parece un lugar más brillante y lleno de posibilidades. Eres esa persona que llega y pone todo tu mundo patas arriba, pero para bien.\n\nGracias por existir.\n\nCon cariño,\nTu admirador.`,
+            '¿Sabes?': {
+                title: "¿Sabes?",
+                content: `Stefany, a veces me pregunto si realmente sabes cuánto te quiero. No por insistencia, ni por ser dramático, sino por algo real y bonito, algo que me nació sin que yo lo buscara. Quise demostrarlo, y quizás en el intento me equivoqué. Tal vez hablé demasiado, o esperé algo que no debía. Pero ahora lo entiendo: no todo sentimiento necesita ser correspondido para ser sincero o para ser real. Si en algún momento hice que te sintieras incómoda, confundida o bajo presión, lo siento profundamente. No era mi intención. Solo quise mostrarte lo que veía en ti: una persona especial. \n\nNo me arrepiento de haber sido honesto, porque guardarme lo que siento también habría sido una falta de respeto hacia ti, hacia lo que generaste en mí. Pero reconozco que quizás no era el momento correcto, ni la forma más sabia. Quiero que sepas que, pase lo que pase, siempre voy a desearte lo mejor, aunque eso signifique seguir caminos distintos. \n\nGracias por existir en mi historia.`,
                 locked: true,
-                code: 'sueños'
+                code: 'pregunto'
             },
-            'poema-1': {
-                title: "Constelación",
-                content: `En el mapa de mi cielo,\nde repente, una estrella nueva.\nNo estaba en los planes,\nni en las viejas profecías.\n\nLlegaste.\n\nY ahora todas las demás estrellas\ngiran torpemente a tu alrededor,\ntratando de aprender\ncómo se hace para brillar tanto.\n\nEste es un texto de prueba para ver cómo funciona el scroll. Si todo va bien, deberías poder deslizar hacia abajo para leer todo el contenido sin problemas. La barra de desplazamiento debería tener los colores del borde que tanto te gustan. Espero que te encante este pequeño detalle. Fue hecho con mucho cariño solo para ti.`,
+            'gracias': {
+                title: "Gracias",
+                content: `Quiero agradecerte. Porque gracias a ti descubrí una parte de mí que no conocía: una parte de mí que se atreve a sentir con todo el corazón. \n\nNunca había hecho algo así por nadie. Tú fuiste la razón por la que di ese paso. No fue porque esperara algo a cambio. Lo hice porque lo sentí. Porque me nacía. Y eso, para mí, ya es suficiente. \n\nSolo quiero que sepas que aquí estoy, que puedes confiar, que puedes hablar, que también mereces ser escuchada y cuidada. No tienes que sentir lo mismo que yo, no es una obligación. Lo único que deseo es que no pierdas la fe en lo bonito, en el amor sincero y en las personas buenas. \n\nNo importa si tu corazón no late en la misma frecuencia que el mío. Lo que importa es que lo que yo sentí fue real, limpio y valiente. Y si eso sirve para demostrarte que aún existen personas que quieren querer bien, entonces todo valió la pena. \n\nGracias por cada palabra, por cada momento, por dejarme sentir esto. Gracias por ser tú.`,
                 locked: true,
-                code: 'estrella'
+                code: 'gracias'
             },
-            'carta-2': {
-                title: "Un simple recordatorio",
-                content: `A veces, en el ajetreo del día a día, se nos olvida lo importantes que somos. \n\nSolo quería recordarte que eres una persona increíble. Fuerte, inteligente y con un corazón enorme. No dejes que las dudas o los malos días te hagan olvidar tu valor.\n\nSigue brillando como solo tú sabes hacerlo.`,
+            'me-gustas': {
+                title: "Me gustas",
+                content: `Me gustas muchísimo. \n\nNo eres difícil de conquistar, eres difícil de merecer y eso es muchísimo mejor. Te atrae alguien por sus cualidades, pero amas a alguien con todos sus defectos. \n\nEl amor auténtico florece cuando nos mostramos tal como somos, sin máscaras ni pretensiones. El amor es seguro, es sincero. Para mí, si tienes que jugar juegos para que te quieran, entonces eso no es amor.\n\nY te escribo esto no para ganarme tu atención, ni para hacerte sentir obligada. Te lo escribo porque esto es lo que soy, y no me interesa disfrazarlo. No vine a impresionarte con palabras vacías. Vine a decirte que existe un tipo de amor que no necesita respuesta para seguir siendo real. \n\nUn amor que no exige nada… pero que aún así quiere darte todo. No vine a cambiarte ni a convencerte. No espero que un día despiertes y me mires como yo te miro. Porque el amor, el de verdad, no es una trampa emocional, es una elección libre. \n\nY yo te elijo así. Tal como eres. Con tus dudas, tus silencios, tus enojos, tus risas raras, tus momentos fríos, tus gestos tiernos. Con todo eso que te hace tú. No sé si soy ese “alguien especial” que tú estás esperando. \n\nPero tú sí fuiste esa persona para mí. Me ayudaste a ver cosas que no sabía que sentía. A escribir cosas que no sabía que tenía dentro. Y eso no lo olvido. No se borra. No se reemplaza. \n\nY si algún día te sientes sola o perdida… si dudas de ti o sientes que el mundo no te entiende… quiero que recuerdes esto: Hubo alguien que te quiso con el corazón. Que te vio completa, rota y perfecta al mismo tiempo. Que te eligió sin intentar cambiarte. \n\nY que, aunque no le elegiste, decidió dejarte flores en la puerta del corazón.`,
                 locked: true,
                 code: 'valor'
             },
@@ -417,12 +431,22 @@
                 code: 'flores'
             }
         };
-        // --- FIN CAMBIOS ---
 
         // Variables de estado
         let currentPhraseIndex = -1;
         let animationState = 'initial'; // 'initial', 'phrases', 'gallery', 'secret', 'writings'
 
+        // --- Agregar el evento de clic de sonido a todos los botones principales ---
+        const allButtons = document.querySelectorAll('a.action-button, a#back-button, a#submit-code-button');
+        allButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                // No reproducir sonido si el botón está desactivado
+                if (!e.currentTarget.classList.contains('pointer-events-none')) {
+                    playSound(popSound);
+                }
+            });
+        });
+        
         // Funciones de la interfaz
         function showMessage(element, text) {
             document.querySelectorAll('.message').forEach(msg => msg.classList.remove('is-visible'));
@@ -462,57 +486,57 @@
 
         // Event Listeners para los botones principales
         phraseButton.addEventListener('click', (e) => {
-    e.preventDefault();
+            e.preventDefault();
 
-    // Si la sección <3 no está activa, haz la animación solo una vez
-    if (animationState !== 'phrases') {
-        shrinkCard();
-        animationState = 'phrases';
-        ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
-            const btn = document.getElementById(id);
-            btn.style.width = '0';
-            btn.style.paddingLeft = '0';
-            btn.style.paddingRight = '0';
-            btn.style.margin = '0';
-            btn.style.opacity = '0';
+            // Si la sección <3 no está activa, haz la animación solo una vez
+            if (animationState !== 'phrases') {
+                shrinkCard();
+                animationState = 'phrases';
+                ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    btn.style.width = '0';
+                    btn.style.paddingLeft = '0';
+                    btn.style.paddingRight = '0';
+                    btn.style.margin = '0';
+                    btn.style.opacity = '0';
+                });
+                buttonContainer.style.justifyContent = 'center';
+            }
+
+            // Siempre muestra una frase diferente
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * phrases.length);
+            } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
+            currentPhraseIndex = randomIndex;
+            showMessage(phraseElement, phrases[currentPhraseIndex]);
         });
-        buttonContainer.style.justifyContent = 'center';
-    }
+        phraseButton.addEventListener('click', (e) => {
+            e.preventDefault();
 
-    // Siempre muestra una frase diferente
-    let randomIndex;
-    do {
-        randomIndex = Math.floor(Math.random() * phrases.length);
-    } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
-    currentPhraseIndex = randomIndex;
-    showMessage(phraseElement, phrases[currentPhraseIndex]);
-    });
-    phraseButton.addEventListener('click', (e) => {
-    e.preventDefault();
+            // Si la sección <3 no está activa, haz la animación solo una vez
+            if (animationState !== 'phrases') {
+                shrinkCard();
+                animationState = 'phrases';
+                ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    btn.style.width = '0';
+                    btn.style.paddingLeft = '0';
+                    btn.style.paddingRight = '0';
+                    btn.style.margin = '0';
+                    btn.style.opacity = '0';
+                });
+                buttonContainer.style.justifyContent = 'center';
+            }
 
-    // Si la sección <3 no está activa, haz la animación solo una vez
-    if (animationState !== 'phrases') {
-        shrinkCard();
-        animationState = 'phrases';
-        ['gallery-button', 'writings-button', 'lock-button'].forEach(id => {
-            const btn = document.getElementById(id);
-            btn.style.width = '0';
-            btn.style.paddingLeft = '0';
-            btn.style.paddingRight = '0';
-            btn.style.margin = '0';
-            btn.style.opacity = '0';
+            // Siempre muestra una frase diferente
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * phrases.length);
+            } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
+            currentPhraseIndex = randomIndex;
+            showMessage(phraseElement, phrases[currentPhraseIndex]);
         });
-        buttonContainer.style.justifyContent = 'center';
-    }
-
-    // Siempre muestra una frase diferente
-    let randomIndex;
-    do {
-        randomIndex = Math.floor(Math.random() * phrases.length);
-    } while (phrases.length > 1 && randomIndex === currentPhraseIndex);
-    currentPhraseIndex = randomIndex;
-    showMessage(phraseElement, phrases[currentPhraseIndex]);
-});
 
         
         galleryButton.addEventListener('click', (e) => {
@@ -583,7 +607,6 @@
             secretInputWrapper.classList.remove('is-focused');
         });
 
-        // --- INICIO CAMBIOS ---
         submitCodeButton.addEventListener('click', (e) => {
             e.preventDefault();
             secretInputWrapper.classList.remove('error', 'success', 'is-focused');
@@ -600,6 +623,7 @@
 
             if (codeFound) {
                 secretInputWrapper.classList.add('success');
+                playSound(notificationSound); // Reproducir sonido de notificación
                 setTimeout(() => {
                     backButton.click();
                 }, 500);
@@ -610,7 +634,6 @@
                 }, 820);
             }
         });
-        // --- FIN CAMBIOS ---
 
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
